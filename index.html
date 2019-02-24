@@ -74,7 +74,9 @@
                 keyV.right = true;
             }
             else if (key === 38 || key === 32) {
-                player.fire = true;
+                if (!player.fire) {
+                    addShoot();
+                }
             }
         })
         document.addEventListener("keyup", function (e) {
@@ -92,8 +94,28 @@
             player.animFrame = requestAnimationFrame(update);
         }
  
+        function addShoot() {
+            player.fire = true;
+            fireme.classList.remove("hide");
+            fireme.xpos = (myShip.offsetLeft + (myShip.offsetWidth / 2));
+            fireme.ypos = myShip.offsetTop - 10;
+            fireme.style.left = fireme.xpos + "px";
+            fireme.style.top = fireme.ypos + "px";
+        }
+ 
         function update() {
             let tempPos = myShip.offsetLeft;
+            if (player.fire) {
+                if (fireme.ypos > 0) {
+                    fireme.ypos -= 15;
+                    fireme.style.top = fireme.ypos + "px";
+                }
+                else {
+                    player.fire = false;
+                    fireme.classList.add("hide");
+                    fireme.ypos = containerDim.height + 100;
+                }
+            }
             if (keyV.left && tempPos > containerDim.left) {
                 tempPos -= player.speed;
             }
