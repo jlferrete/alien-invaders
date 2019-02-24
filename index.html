@@ -94,10 +94,10 @@
  
         function update() {
             let tempPos = myShip.offsetLeft;
-            if (keyV.left) {
+            if (keyV.left && tempPos > containerDim.left) {
                 tempPos -= player.speed;
             }
-            if (keyV.right) {
+            if (keyV.right && (tempPos + myShip.offsetWidth) < containerDim.right) {
                 tempPos += player.speed;
             }
             myShip.style.left = tempPos + "px";
