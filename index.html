@@ -128,11 +128,24 @@
             }
         })
  
+        function gameOver() {
+            btn_start.style.display = "block";
+            btn_start.innerHTML = "Restart New Game";
+        }
+ 
+        function clearAliens() {
+            let tempAliens = document.querySelectorAll(".alien");
+            for (let x = 0; x < tempAliens.length; x++) {
+                tempAliens[x].parentNode.removeChild(tempAliens[x]);
+            }
+        }
+ 
         function startGame() {
             if (player.gameOver) {
+                clearAliens();
                 player.gameOver = false;
                 btn_start.style.display = "none";
-                player.alienSpeed = 5;
+                player.alienSpeed = 15;
                 setupAliens(5);
                 console.log("start game");
                 player.animFrame = requestAnimationFrame(update);
@@ -196,37 +209,44 @@
         }
  
         function update() {
-            let tempAliens = document.querySelectorAll(".alien");
-            for (let x = tempAliens.length - 1; x > -1; x--) {
-                let el = tempAliens[x];
-                if (el.xpos > (containerDim.width - el.offsetWidth) || el.xpos < containerDim.left) {
-                    el.directionMove *= -1;
-                    el.ypos += 40;
+            if (!player.gameOver) {
+                let tempAliens = document.querySelectorAll(".alien");
+                for (let x = tempAliens.length - 1; x > -1; x--) {
+                    let el = tempAliens[x];
+                    if (el.xpos > (containerDim.width - el.offsetWidth) || el.xpos < containerDim.left) {
+                        el.directionMove *= -1;
+                        el.ypos += 40;
+                        if (el.ypos > (myShip.offsetTop - 50)) {
+                            console.log("Game Over");
+                            player.gameOver = true;
+                            gameOver();
+                        }
+                    }
+                    el.xpos += (player.alienSpeed * el.directionMove);
+                    el.style.left = el.xpos + "px";
+                    el.style.top = el.ypos + "px";
                 }
-                el.xpos += (player.alienSpeed * el.directionMove);
-                el.style.left = el.xpos + "px";
-                el.style.top = el.ypos + "px";
-            }
-            let tempPos = myShip.offsetLeft;
-            if (player.fire) {
-                if (fireme.ypos > 0) {
-                    fireme.ypos -= 15;
-                    fireme.style.top = fireme.ypos + "px";
+                let tempPos = myShip.offsetLeft;
+                if (player.fire) {
+                    if (fireme.ypos > 0) {
+                        fireme.ypos -= 15;
+                        fireme.style.top = fireme.ypos + "px";
+                    }
+                    else {
+                        player.fire = false;
+                        fireme.classList.add("hide");
+                        fireme.ypos = containerDim.height + 100;
+                    }
                 }
-                else {
-                    player.fire = false;
-                    fireme.classList.add("hide");
-                    fireme.ypos = containerDim.height + 100;
+                if (keyV.left && tempPos > containerDim.left) {
+                    tempPos -= player.speed;
                 }
+                if (keyV.right && (tempPos + myShip.offsetWidth) < containerDim.right) {
+                    tempPos += player.speed;
+                }
+                myShip.style.left = tempPos + "px";
+                player.animFrame = requestAnimationFrame(update);
             }
-            if (keyV.left && tempPos > containerDim.left) {
-                tempPos -= player.speed;
-            }
-            if (keyV.right && (tempPos + myShip.offsetWidth) < containerDim.right) {
-                tempPos += player.speed;
-            }
-            myShip.style.left = tempPos + "px";
-            player.animFrame = requestAnimationFrame(update);
         }
     </script>
 </body>
