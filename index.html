@@ -143,13 +143,13 @@
             let tempWidth = 70;
             let lastCol = containerDim.width - tempWidth;
             let row = {
-                x: containerDim.left
+                x: containerDim.left + 50
                 , y: 50
             }
             for (let x = 0; x < num; x++) {
                 if (row.x > (lastCol - tempWidth)) {
                     row.y += 70;
-                    row.x = containerDim.left
+                    row.x = containerDim.left + 50
                 }
                 alienMaker(row, tempWidth);
                 row.x += tempWidth + 20;
@@ -196,6 +196,17 @@
         }
  
         function update() {
+            let tempAliens = document.querySelectorAll(".alien");
+            for (let x = tempAliens.length - 1; x > -1; x--) {
+                let el = tempAliens[x];
+                if (el.xpos > (containerDim.width - el.offsetWidth) || el.xpos < containerDim.left) {
+                    el.directionMove *= -1;
+                    el.ypos += 40;
+                }
+                el.xpos += (player.alienSpeed * el.directionMove);
+                el.style.left = el.xpos + "px";
+                el.style.top = el.ypos + "px";
+            }
             let tempPos = myShip.offsetLeft;
             if (player.fire) {
                 if (fireme.ypos > 0) {
