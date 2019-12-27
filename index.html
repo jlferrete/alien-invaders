@@ -78,6 +78,15 @@
             border: 4px dotted white;
             background-color: black;
         }
+        
+        .topbar {
+            height: 50px;
+            width: 100%;
+            background-color: black;
+            color: white;
+            text-align: center;
+            font-size: 2em;
+        }
     </style>
 </head>
 
@@ -129,6 +138,8 @@
         function gameOver() {
             btn_start.style.display = "block";
             btn_start.innerHTML = "Restart New Game";
+            player.fire = true;
+            fireme.classList.add("hide");
         }
 
         function clearAliens() {
@@ -143,8 +154,11 @@
                 clearAliens();
                 player.gameOver = false;
                 btn_start.style.display = "none";
-                player.alienSpeed = 5;
-                setupAliens(5);
+                player.alienSpeed = 12;
+                player.score = 0;
+                player.fire = false;
+                scoreOutput.textContent = player.score;
+                setupAliens(20);
                 messageOutput("start game");
                 player.animFrame = requestAnimationFrame(update);
             }
@@ -221,6 +235,7 @@
                 if (tempAliens.length == 0) {
                     player.gameOver = true;
                     messageOutput("You Won");
+                    gameOver();
                 }
                 for (let x = tempAliens.length - 1; x > -1; x--) {
                     let el = tempAliens[x];
