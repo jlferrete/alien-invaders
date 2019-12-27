@@ -82,7 +82,7 @@
 </head>
 
 <body>
-    <div class="topBar">Score : <span class="score">0</span></div>
+    <div class="topBar"> Score : <span class="score">0</span> <span class="message"></span> </div>
     <div class="container">
         <div class="startButton">Start Game</div>
         <div class="myShip"></div>
@@ -95,6 +95,7 @@
         const fireme = document.querySelector(".fireme");
         const scoreOutput = document.querySelector(".score");
         const containerDim = container.getBoundingClientRect();
+        const message = document.querySelector(".message");
         btn_start.addEventListener("click", startGame);
         let player = {
             score: 0,
@@ -142,9 +143,9 @@
                 clearAliens();
                 player.gameOver = false;
                 btn_start.style.display = "none";
-                player.alienSpeed = 15;
+                player.alienSpeed = 5;
                 setupAliens(5);
-                console.log("start game");
+                messageOutput("start game");
                 player.animFrame = requestAnimationFrame(update);
             }
         }
@@ -171,7 +172,6 @@
         }
 
         function alienMaker(row, tempWidth) {
-            console.log(row);
             let div = document.createElement("div");
             div.classList.add("alien");
             div.style.backgroundColor = randomColor();
@@ -193,7 +193,6 @@
             div.style.top = div.ypos + "px";
             div.directionMove = 1;
             container.appendChild(div);
-            console.log(div);
         }
 
         function addShoot() {
@@ -209,28 +208,37 @@
             let aRect = a.getBoundingClientRect();
             let bRect = b.getBoundingClientRect();
             return !(
-                (aRect.bottom < bRect.top) ||
-                (aRect.top > bRect.bottom) ||
-                (aRect.right < bRect.left) ||
-                (aRect.left > bRect.right)
-            )
+                (aRect.bottom < bRect.top) || (aRect.top > bRect.bottom) || (aRect.right < bRect.left) || (aRect.left > bRect.right))
+        }
 
+        function messageOutput(mes) {
+            message.innerHTML = mes;
         }
 
         function update() {
             if (!player.gameOver) {
                 let tempAliens = document.querySelectorAll(".alien");
+                if (tempAliens.length == 0) {
+                    player.gameOver = true;
+                    messageOutput("You Won");
+                }
                 for (let x = tempAliens.length - 1; x > -1; x--) {
                     let el = tempAliens[x];
                     if (isCollide(el, fireme)) {
-                        console.log("HIT");
-
+                        messageOutput("HIT");
+                        player.alienSpeed++;
+                        player.score++;
+                        scoreOutput.textContent = player.score;
+                        player.fire = false;
+                        fireme.classList.add("hide");
+                        el.parentNode.removeChild(el);
+                        fireme.ypos = containerDim.height + 100;
                     }
                     if (el.xpos > (containerDim.width - el.offsetWidth) || el.xpos < containerDim.left) {
                         el.directionMove *= -1;
                         el.ypos += 40;
                         if (el.ypos > (myShip.offsetTop - 50)) {
-                            console.log("Game Over");
+                            messageOutput("Game Over");
                             player.gameOver = true;
                             gameOver();
                         }
