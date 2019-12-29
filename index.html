@@ -186,6 +186,10 @@
         }
 
         function alienMaker(row, tempWidth) {
+
+            if (row.y > (containerDim.height - 200)) {
+                return;
+            }
             let div = document.createElement("div");
             div.classList.add("alien");
             div.style.backgroundColor = randomColor();
